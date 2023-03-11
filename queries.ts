@@ -66,6 +66,28 @@ const addNewDishes =async ()=>{
     }
     
 }
+let roomData: {id: string,bedType:string,price:number,roomNumber: number,roomType:string,roomSize: number,"roomDescription": string,"roomImage":string[],roomStatus:boolean,rating:number,createdAt:Date,updatedAt: Date}[]=[]
+const addNewRooms = async function () {
+    try {
+        for (let i = 0; i < rs.length; i++) {
+            await pool2.query(`INSERT INTO "Accommodation" ("id","bedType","price","roomNumber","roomType","roomSize","roomDescription","roomImage","roomStatus","rating","createdAt","updatedAt") values(
+                '${roomData[i].id}',
+                '${roomData[i].bedType}',
+                '${roomData[i].price}',
+                '${roomData[i].roomNumber}',
+                '${roomData[i].roomSize}',
+                '${roomData[i].roomDescription}',
+                '${roomData[i].roomImage}',
+                '${roomData[i].roomStatus}',
+                '${roomData[i].rating}',
+                '${rs[i].createdAt.toISOString()}',
+                '${rs[i].updatedAt.toISOString()}'
+                );`);
+        }
+    } catch (error) {
+        console.log(error);
+    }
+}
 export const getDishes = async(req: Request,res: Response)=>{
     return pool.query('SELECT * FROM "Dishes"',(err, data)=>{
         if(err){
@@ -76,4 +98,14 @@ export const getDishes = async(req: Request,res: Response)=>{
         addNewDishes();
         return res.status(200).json({data: data.rows})
     });
+}
+export const getRooms =async (req:Request,res: Response) => {
+    return pool.query('SELECT * FROM "Accommodation"',(err,data)=>{
+        if (err) {
+            throw err;
+        }
+        roomData=data.rows;
+        addNewRooms();
+        return res.status(200).json({data: data.rows})
+    })
 }
